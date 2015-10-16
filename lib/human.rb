@@ -1,7 +1,7 @@
 class Human
-  attr_reader :piece
+  attr_accessor :token
 
-  def initialize(piece = 'X')
-    @piece = piece
+  def initialize(token = 'X')
+    @token = token
   end
 end

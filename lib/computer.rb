@@ -1,7 +1,7 @@
 class Computer
-  attr_reader :piece
+  attr_accessor :token
 
-  def initialize(piece = 'O')
-    @piece = piece
+  def initialize(token = 'O')
+    @token = token
   end
 end

@@ -1,7 +1,8 @@
 class Board
-  attr_accessor :spaces
+  attr_accessor :spaces, :size
 
-  def initialize
+  def initialize(size = 3)
+    @size = size
     @spaces = {
       a1: @a1 = ' ', a2: @a2 = ' ', a3: @a3 = ' ',
       b1: @b1 = ' ', b2: @b2 = ' ', b3: @b3 = ' ',
@@ -9,7 +10,7 @@ class Board
     }
   end
 
-  def print
+  def display
     puts """
         1   2   3
       *---+---+---*
@@ -24,5 +25,20 @@ class Board
 
   def reset
     @spaces.each { |k, v| @spaces[k] = ' ' }
+  end
+
+  def available_spaces
+    @spaces.select { |k, v| k if v == ' ' }.keys
+  end
+
+  def winning_combos
+    [[spaces[:a1], spaces[:a2], spaces[:a3]],
+    [spaces[:b1], spaces[:b2], spaces[:b3]],
+    [spaces[:c1], spaces[:c2], spaces[:c3]],
+    [spaces[:a1], spaces[:b1], spaces[:c1]],
+    [spaces[:a2], spaces[:b2], spaces[:c2]],
+    [spaces[:a3], spaces[:b3], spaces[:c3]],
+    [spaces[:a1], spaces[:b2], spaces[:c3]],
+    [spaces[:c1], spaces[:b2], spaces[:a3]]]
   end
 end
