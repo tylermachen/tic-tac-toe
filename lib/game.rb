@@ -14,7 +14,7 @@ class Game
     board.reset
     board.display
     loop do
-      player_move
+      human_move
       board.display
 
       if board.available_spaces.length <= 6
@@ -80,13 +80,13 @@ class Game
     end
   end
 
-  def player_move
+  def human_move
     puts 'Please choose an empty space on the game board (e.g. type \'a1\' to place your piece in the upper-left-hand corner).'
     input = get_input
     if valid_move?(input)
       board.spaces[input.to_sym] = human.token
     else
-      player_move
+      human_move
     end
   end
 
