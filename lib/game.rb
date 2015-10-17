@@ -17,16 +17,17 @@ class Game
       human_move
       board.display
 
-      if board.available_spaces.length <= 6
-        game_over?
-      end
+      # if board.available_spaces.length <= 6
+      #   game_over?
+      # end
 
       computer_move
       board.display
 
-      if board.available_spaces.length <= 6
-        game_over?
-      end
+      # if board.available_spaces.length <= 6
+      #   game_over?
+      # end
+      break if board.available_spaces.flatten.length < 1
     end
   end
 
@@ -35,7 +36,9 @@ class Game
   end
 
   def valid_move?(space)
-    board.spaces[space.to_sym] == ' '
+    board.spaces.each do |row|
+      row.any? { |s| s == space.to_i }
+    end
   end
 
   def get_input
@@ -81,10 +84,18 @@ class Game
   end
 
   def human_move
-    puts 'Please choose an empty space on the game board (e.g. type \'a1\' to place your piece in the upper-left-hand corner).'
+    puts 'Please choose an empty space on the game board (e.g. type \'1\' to place your piece in the upper-left-hand corner).'
     input = get_input
     if valid_move?(input)
-      board.spaces[input.to_sym] = human.token
+      board.spaces.map! do |row|
+        row.map! do |space|
+          if input.to_i == space
+            space = human.token
+          else
+            space
+          end
+        end
+      end
     else
       human_move
     end
@@ -93,9 +104,17 @@ class Game
   def computer_move
     puts 'The computer is thinking...'
     sleep(1)
-    space = board.available_spaces.sample
-    if valid_move?(space)
-      board.spaces[space.to_sym] = computer.token
+    input = board.available_spaces.sample.sample
+    if valid_move?(input)
+      board.spaces.map! do |row|
+        row.map! do |space|
+          if input.to_i == space
+            space = computer.token
+          else
+            space
+          end
+        end
+      end
     else
       computer_move
     end
