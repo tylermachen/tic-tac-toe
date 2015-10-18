@@ -87,6 +87,8 @@ class Board
     token
   end
 
+  private
+
   # iterate over all horizontal spaces checking for winner based on board size
   def horizontal_win?
     winner = false

@@ -27,6 +27,8 @@ class Game
     end
   end
 
+  private
+
   def intro
     puts """
             DONT OPEN|DEAD INSIDE
