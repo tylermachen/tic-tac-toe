@@ -20,19 +20,10 @@ class Game
     loop do
       human_move
       board.display
-
-      # only check for winner if there have been enough turns for someone to win
-      if board.available_spaces.flatten.length <= board.size ** 2 - board.size
-        game_over?
-      end
-
+      game_over? if game_can_be_won?
       computer_move
       board.display
-
-      # only check for winner if there have been enough turns for someone to win
-      if board.available_spaces.flatten.length <= board.size ** 2 - board.size
-        game_over?
-      end
+      game_over? if game_can_be_won?
     end
   end
 
@@ -48,7 +39,6 @@ class Game
     Wins: #{human.wins}  Losses: #{human.losses}  Draws: #{human.draws}
     type \'quit\' at any time to exit the game
     """
-    sleep(SLEEP_DURATION)
   end
 
   def choose_character
@@ -216,6 +206,7 @@ class Game
     input
   end
 
+
   def valid_move?(space)
     valid = false
     board.spaces.each do |row|
@@ -223,6 +214,10 @@ class Game
       break if valid
     end
     valid
+  end
+
+  def game_can_be_won?
+    board.available_spaces.flatten.length <= board.size ** 2 - board.size
   end
 
   def exit_game
