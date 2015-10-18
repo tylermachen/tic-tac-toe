@@ -1,6 +1,6 @@
 class Game
   PROMPT = '> '
-  SLEEP_DURATION = 2
+  SLEEP_DURATION = 1.5
   attr_reader :board, :human, :computer
 
   def initialize(board = nil, human = nil, computer = nil)
