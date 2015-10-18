@@ -81,6 +81,7 @@ class Board
     winner = false
     spaces.each do |row|
       winner = token_match?(row)
+      break if winner
     end
     winner
   end
@@ -92,6 +93,7 @@ class Board
     size.times do |i|
       spaces.each { |row| arr << row[i] }
       winner = token_match?(arr)
+      break if winner
       arr = []
     end
     winner

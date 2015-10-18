@@ -158,7 +158,7 @@ class Game
     case winner
       when human.token then human_win
       when computer.token then computer_win
-      else draw if board.available_spaces.flatten.length < 1
     end
+    draw if board.available_spaces.flatten.length < 1
   end
 end
