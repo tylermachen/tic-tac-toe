@@ -11,23 +11,25 @@ class Game
   def play
     intro
     choose_token
+    choose_board_size
     board.reset
     board.display
     loop do
       human_move
       board.display
 
-      # if board.available_spaces.length <= 6
-      #   game_over?
-      # end
+      # only check for winner if there have been enough turns for someone to win
+      if board.available_spaces.flatten.length <= board.size ** 2 - board.size
+        game_over?
+      end
 
       computer_move
       board.display
 
-      # if board.available_spaces.length <= 6
-      #   game_over?
-      # end
-      break if board.available_spaces.flatten.length < 1
+      # only check for winner if there have been enough turns for someone to win
+      if board.available_spaces.flatten.length <= board.size ** 2 - board.size
+        game_over?
+      end
     end
   end
 
@@ -71,6 +73,18 @@ class Game
 
     puts "Sweet. You are #{human.token}'s"
     sleep(1)
+  end
+
+  def choose_board_size
+    puts 'What size board would you like? (e.g. enter \'3\' for a 3x3 board. Enter \'5\' for a 5x5 board.)'
+    input = get_input
+    if (3..10).to_a.include?(input.to_i)
+      board.size = input.to_i
+      board.spaces = board.build
+    else
+      puts "Please choose a board size of 3 or greater."
+      choose_board_size
+    end
   end
 
   def play_again?
@@ -136,21 +150,11 @@ class Game
   end
 
   def game_over?
-    human_win if winner == 1
-    computer_win if winner == 2
-    draw if board.available_spaces.length < 1
-  end
-
-  def winner
-    # iterate over each set of possible combos checking to see if human or computer has achieved any
-    board.winning_combos.each do |combo|
-      if (combo[0] == human.token) && (combo[1] == human.token) && (combo[2] == human.token)
-        # human wins
-        return 1
-      elsif (combo[0] == computer.token) && (combo[1] == computer.token) && (combo[2] == computer.token)
-        # computer wins
-        return 2
-      end
+    winner = board.winning_token
+    case winner
+      when human.token then human_win
+      when computer.token then computer_win
     end
+    draw if board.available_spaces.flatten.length < 1
   end
 end

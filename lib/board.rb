@@ -6,22 +6,40 @@ class Board
     @spaces = build
   end
 
+  # build board based on chosen size
   def build
-    [[1, 2, 3],
-     [4, 5, 6],
-     [7, 8, 9]]
+    board = []
+    range_start = 1
+    range_end = size
+    board << (range_start..range_end).to_a
+    2.upto(size) do |i|
+      range_start = range_end + 1
+      range_end = size * i
+      board << (range_start..range_end).to_a
+    end
+    board
   end
 
   def display
-    puts """
-    *---+---+---*
-    | #{spaces[0][0]} | #{spaces[0][1]} | #{spaces[0][2]} |
-    +---+---+---+
-    | #{spaces[1][0]} | #{spaces[1][1]} | #{spaces[1][2]} |
-    +---+---+---+
-    | #{spaces[2][0]} | #{spaces[2][1]} | #{spaces[2][2]} |
-    *---+---+---*
-    """
+    spaces.each.with_index do |row, row_index|
+      puts " ---" * size
+      row.each.with_index(1) do |space, space_index|
+        if space_index == size
+          if space.to_i < 10
+            puts "| #{space} |"
+          else
+            puts "| #{space}|"
+          end
+        else
+          if space.to_i < 10
+            print "| #{space} "
+          else
+            print "| #{space}"
+          end
+        end
+      end
+    end
+    puts " ---" * size
   end
 
   def reset
@@ -42,14 +60,65 @@ class Board
     end
   end
 
-  def winning_combos
-    # [[spaces[:a1], spaces[:a2], spaces[:a3]],
-    # [spaces[:b1], spaces[:b2], spaces[:b3]],
-    # [spaces[:c1], spaces[:c2], spaces[:c3]],
-    # [spaces[:a1], spaces[:b1], spaces[:c1]],
-    # [spaces[:a2], spaces[:b2], spaces[:c2]],
-    # [spaces[:a3], spaces[:b3], spaces[:c3]],
-    # [spaces[:a1], spaces[:b2], spaces[:c3]],
-    # [spaces[:c1], spaces[:b2], spaces[:a3]]]
+  # call each winning method below to check if there has been a winner and return winning token
+  def winning_token
+    token = false
+    r1 = horizontal_win?
+    r2 = vertical_win?
+    r3 = left_top_diagonal_win?
+    r4 = left_bottom_diagonal_win?
+    case
+      when r1 then token = r1
+      when r2 then token = r2
+      when r3 then token = r3
+      when r4 then token = r4
+    end
+    token
+  end
+
+  # iterate over all horizontal spaces checking for winner based on board size
+  def horizontal_win?
+    winner = false
+    spaces.each do |row|
+      winner = token_match?(row)
+    end
+    winner
+  end
+
+  # iterate over all vertical spaces checking for winner based on board size
+  def vertical_win?
+    winner = false
+    arr = []
+    size.times do |i|
+      spaces.each { |row| arr << row[i] }
+      winner = token_match?(arr)
+      arr = []
+    end
+    winner
+  end
+
+  # iterate over array and check spaces from upper-left-hand corner to lower-right-hand based on board size
+  def left_top_diagonal_win?
+    arr = []
+    size.times { |i| arr << spaces[i][i] }
+    token_match?(arr)
+  end
+
+  # iterate over array and check spaces from lower-left-hand corner to upper-right-hand based on board size
+  def left_bottom_diagonal_win?
+    arr = []
+    size.times { |i| arr << spaces[spaces.length - (1 + i)][i] }
+    token_match?(arr)
+  end
+
+  # iterate over array of spaces and see if they are all X's or O's (have a winner)
+  def token_match?(array)
+    winner = false
+    if array.all? { |space| space == 'X' }
+      winner = array[0]
+    elsif array.all? { |space| space == 'O' }
+      winner = array[0]
+    end
+    winner
   end
 end
