@@ -1,6 +1,6 @@
 class Game
   PROMPT = '> '
-  attr_accessor :board, :human, :computer
+  attr_reader :board, :human, :computer
 
   def initialize(board = nil, human = nil, computer = nil)
     @board = board
@@ -38,9 +38,12 @@ class Game
   end
 
   def valid_move?(space)
+    valid = false
     board.spaces.each do |row|
-      row.any? { |s| s == space.to_i }
+      valid = row.any? { |s| s == space.to_i }
+      break if valid
     end
+    valid
   end
 
   def get_input
@@ -64,19 +67,20 @@ class Game
     if input == 'x'
       human.token = 'X'
       computer.token = 'O'
+      puts "Sweet. You are #{human.token}'s"
+      sleep(1)
     elsif input == 'o'
       human.token = 'O'
       computer.token = 'X'
+      puts "Sweet. You are #{human.token}'s"
+      sleep(1)
     else
       choose_token
     end
-
-    puts "Sweet. You are #{human.token}'s"
-    sleep(1)
   end
 
   def choose_board_size
-    puts 'What size board would you like? (e.g. enter \'3\' for a 3x3 board. Enter \'5\' for a 5x5 board.)'
+    puts 'What size board would you like? (e.g. enter \'3\' for a 3x3 board. Enter \'5\' for a 5x5 board and so on.)'
     input = get_input
     if (3..10).to_a.include?(input.to_i)
       board.size = input.to_i
@@ -154,7 +158,7 @@ class Game
     case winner
       when human.token then human_win
       when computer.token then computer_win
+      else draw if board.available_spaces.flatten.length < 1
     end
-    draw if board.available_spaces.flatten.length < 1
   end
 end
