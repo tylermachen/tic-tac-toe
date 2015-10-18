@@ -80,41 +80,6 @@ class Game
     sleep(SLEEP_DURATION)
   end
 
-  def generate_opponent
-    # pick a random zombie from the pack as the opponent
-    Zombie::ZOMBIE_HASH.to_a.shuffle.each do |zombie, description|
-      computer.character = zombie.upcase
-      @zombie_description = description
-      break
-    end
-    puts "\nYou are playing against a #{computer.character}:"
-    puts "#{@zombie_description}"
-    sleep(SLEEP_DURATION)
-  end
-
-  def valid_move?(space)
-    valid = false
-    board.spaces.each do |row|
-      valid = row.any? { |s| s == space.to_i }
-      break if valid
-    end
-    valid
-  end
-
-  def get_input
-    print PROMPT
-    input = gets.chomp.downcase
-    if input == 'q' || input == 'quit'
-      exit_game
-    end
-    input
-  end
-
-  def exit_game
-    puts "\nFarewell, my friend.\n\n"
-    exit
-  end
-
   def choose_token
     puts "Would you like to be X\'s or O\'s? (type \'x\' or \'o\')"
     input = get_input
@@ -130,6 +95,18 @@ class Game
     end
   end
 
+  def generate_opponent
+    # pick a random zombie from the pack as the opponent
+    Zombie::ZOMBIE_HASH.to_a.shuffle.each do |zombie, description|
+      computer.character = zombie.upcase
+      @zombie_description = description
+      break
+    end
+    puts "\nYou are playing against a #{computer.character}:"
+    puts "#{@zombie_description}"
+    sleep(SLEEP_DURATION)
+  end
+
   def choose_board_size
     puts "\nWhat size board would you like? (e.g. enter \'3\' for a 3x3 board. Enter \'5\' for a 5x5 board and so on.)"
     input = get_input
@@ -141,16 +118,6 @@ class Game
     else
       puts "\nPlease choose a board size of 3 or greater."
       choose_board_size
-    end
-  end
-
-  def play_again?
-    puts "\nWould you like to play again? (yes / no)"
-    input = get_input
-    case input
-      when 'yes' then play
-      when 'no'  then exit_game
-      else play_again?
     end
   end
 
@@ -191,6 +158,24 @@ class Game
     end
   end
 
+  def game_over?
+    winner = board.winning_token
+    case winner
+      when human.token then human_win
+      when computer.token then computer_win
+    end
+    draw if board.available_spaces.flatten.length < 1
+  end
+
+  def game_over_message(hash)
+    hash.each do |character, quote|
+      if human.character.downcase == character.downcase
+        end_quote = "\"#{quote.sample}\""
+        return end_quote + "\n - " + character
+      end
+    end
+  end
+
   def draw
     puts "You made it out alive...for now (TIE GAME!)."
     puts game_over_message(Character::DRAW_HASH)
@@ -212,21 +197,36 @@ class Game
     play_again?
   end
 
-  def game_over_message(hash)
-    hash.each do |character, quote|
-      if human.character.downcase == character.downcase
-        end_quote = "\"#{quote.sample}\""
-        return end_quote + "\n - " + character
-      end
+  def play_again?
+    puts "\nWould you like to play again? (yes / no)"
+    input = get_input
+    case input
+      when 'yes' then play
+      when 'no'  then exit_game
+      else play_again?
     end
   end
 
-  def game_over?
-    winner = board.winning_token
-    case winner
-      when human.token then human_win
-      when computer.token then computer_win
+  def get_input
+    print PROMPT
+    input = gets.chomp.downcase
+    if input == 'q' || input == 'quit'
+      exit_game
     end
-    draw if board.available_spaces.flatten.length < 1
+    input
+  end
+
+  def valid_move?(space)
+    valid = false
+    board.spaces.each do |row|
+      valid = row.any? { |s| s == space.to_i }
+      break if valid
+    end
+    valid
+  end
+
+  def exit_game
+    puts "\nFarewell, my friend.\n\n"
+    exit
   end
 end
