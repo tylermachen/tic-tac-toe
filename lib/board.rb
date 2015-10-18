@@ -21,6 +21,7 @@ class Board
   end
 
   def display
+    puts "\n"
     spaces.each.with_index do |row, row_index|
       puts " ---" * size
       row.each.with_index(1) do |space, space_index|
@@ -40,6 +41,7 @@ class Board
       end
     end
     puts " ---" * size
+    puts "\n"
   end
 
   def reset
